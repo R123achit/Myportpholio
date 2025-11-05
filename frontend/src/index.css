@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply transition-colors duration-300;
+    cursor: none;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Hide default cursor on desktop */
+  @media (min-width: 768px) {
+    * {
+      cursor: none !important;
+    }
+    
+    a, button {
+      cursor: none !important;
+    }
+  }
+
+  /* Show default cursor on mobile */
+  @media (max-width: 767px) {
+    body {
+      cursor: auto;
+    }
+  }
+}
+
+@layer utilities {
+  .gradient-bg {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+  
+  .soft-gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+  }
+}
+
