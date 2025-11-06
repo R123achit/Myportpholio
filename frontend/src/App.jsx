@@ -10,6 +10,7 @@ import ScrollProgress from './components/ScrollProgress';
 import Loader from './components/Loader';
 import CustomCursor from './components/CustomCursor';
 import CodingStats from './components/CodingStats';
+import AIChatbot from './components/AIChatbot';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -44,6 +45,9 @@ function App() {
       
       {/* Custom Cursor */}
       <CustomCursor />
+      
+      {/* AI Chatbot */}
+      <AIChatbot />
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
         <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
