@@ -5,6 +5,8 @@ import mongoose from 'mongoose';
 import projectRoutes from './routes/projectRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
+import githubRoutes from './routes/githubRoutes.js';
+import codingStatsRoutes from './routes/codingStatsRoutes.js';
 
 dotenv.config();
 
@@ -39,7 +41,9 @@ app.get('/', (req, res) => {
       health: '/api/health',
       projects: '/api/projects',
       contact: '/api/contact',
-      chatbot: '/api/chatbot'
+      chatbot: '/api/chatbot',
+      github: '/api/github',
+      codingStats: '/api/coding-stats'
     },
     documentation: 'Visit /api/health to check server status'
   });
@@ -49,6 +53,8 @@ app.get('/', (req, res) => {
 app.use('/api/projects', projectRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/github', githubRoutes);
+app.use('/api/coding-stats', codingStatsRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

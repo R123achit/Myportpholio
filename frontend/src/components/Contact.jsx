@@ -157,7 +157,7 @@ const Contact = () => {
                 className="mt-8 rounded-xl overflow-hidden shadow-lg"
               >
                 <img
-                  src="image copy4.png"
+                  src="image.png"
                   alt="Location"
                   className="w-full h-64 object-cover"
                 />

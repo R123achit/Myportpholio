@@ -1,70 +1,47 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { FiGithub, FiExternalLink } from 'react-icons/fi';
+import { FiGithub, FiExternalLink, FiStar, FiGitBranch } from 'react-icons/fi';
+import axios from 'axios';
 
-// Dummy data for when backend is not available
-const dummyProjects = [
-  {
-    _id: '1',
-    title: 'E-Commerce Platform',
-    description: 'Full-stack e-commerce application with user authentication, product management, and payment integration.',
-    techStack: ['React', 'Node.js', 'MongoDB', 'Express', 'Stripe'],
-    image: 'image.png',
-    github: 'https://github.com/yourusername/project1',
-    live: 'https://project1.com',
-  },
-  {
-    _id: '2',
-    title: 'Social Media Dashboard',
-    description: 'Analytics dashboard for social media metrics with real-time data visualization and reporting.',
-    techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Chart.js'],
-    image: 'image copy1.png',
-    github: 'https://github.com/yourusername/project2',
-    live: 'https://project2.com',
-  },
-  {
-    _id: '3',
-    title: 'Task Management App',
-    description: 'Collaborative task management tool with drag-and-drop functionality and team features.',
-    techStack: ['React', 'Redux', 'Node.js', 'PostgreSQL'],
-    image: 'image copy2.png',
-    github: 'https://github.com/yourusername/project3',
-    live: 'https://project3.com',
-  },
-  // {
-  //   _id: '4',
-  //   title: 'Weather Forecast App',
-  //   description: 'Real-time weather application with location-based forecasts and interactive maps.',
-  //   techStack: ['React', 'OpenWeather API', 'Tailwind CSS'],
-  //   image: 'https://via.placeholder.com/600x400?text=Weather+Forecast+App',
-  //   github: 'https://github.com/yourusername/project4',
-  //   live: 'https://project4.com',
-  // },
-  // {
-  //   _id: '5',
-  //   title: 'Blog CMS',
-  //   description: 'Content management system for blogs with rich text editor and SEO optimization.',
-  //   techStack: ['Next.js', 'MongoDB', 'TailwindCSS', 'NextAuth'],
-  //   image: 'https://via.placeholder.com/600x400?text=Blog+CMS',
-  //   github: 'https://github.com/yourusername/project5',
-  //   live: 'https://project5.com',
-  // },
-  {
-    _id: '6',
-    title: 'Fitness Tracker',
-    description: 'Personal fitness tracking application with workout plans and progress monitoring.',
-    techStack: ['React Native', 'Firebase', 'Redux'],
-    image: 'image copy3.png',
-    github: 'https://github.com/yourusername/project6',
-    live: 'https://project6.com',
-  },
-];
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Portfolio = () => {
-  const [projects] = useState(dummyProjects);
-  const [loading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [usingGithub, setUsingGithub] = useState(false);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+
+  // Fetch projects from GitHub API
+  useEffect(() => {
+    const fetchGithubProjects = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/api/github/repos`);
+        
+        if (response.data.success && response.data.projects.length > 0) {
+          setProjects(response.data.projects);
+          setUsingGithub(true);
+          console.log('✅ Loaded projects from GitHub:', response.data.projects.length);
+        } else {
+          setProjects([]);
+          setUsingGithub(false);
+          setError('No projects found');
+          console.log('⚠️ No projects found');
+        }
+      } catch (err) {
+        console.error('❌ Failed to fetch GitHub repos:', err.message);
+        setProjects([]);
+        setUsingGithub(false);
+        setError('Failed to load projects. Please check your connection.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGithubProjects();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -96,9 +73,11 @@ const Portfolio = () => {
               PORTFOLIO
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Here are some of my recent projects showcasing my skills and experience
-            </p>
+            {error && (
+              <p className="mt-2 text-sm text-yellow-600 dark:text-yellow-400">
+                {error}
+              </p>
+            )}
           </motion.div>
 
           {/* Projects Grid */}
@@ -134,12 +113,30 @@ const Portfolio = () => {
                       {project.description}
                     </p>
 
+                    {/* GitHub Stats (if available) */}
+                    {usingGithub && (project.stars > 0 || project.forks > 0) && (
+                      <div className="flex gap-4 mb-3 text-sm text-gray-600 dark:text-gray-400">
+                        {project.stars > 0 && (
+                          <div className="flex items-center gap-1">
+                            <FiStar className="text-yellow-500" />
+                            <span>{project.stars}</span>
+                          </div>
+                        )}
+                        {project.forks > 0 && (
+                          <div className="flex items-center gap-1">
+                            <FiGitBranch className="text-blue-500" />
+                            <span>{project.forks}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Tech Stack */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.techStack.map((tech, techIndex) => (
                         <span
                           key={techIndex}
-                          className="px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full"
+                          className="px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full capitalize"
                         >
                           {tech}
                         </span>
