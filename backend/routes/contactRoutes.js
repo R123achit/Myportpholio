@@ -49,29 +49,51 @@ router.post('/', async (req, res) => {
     // Send email notification (if configured)
     let emailSent = false;
     const transporter = createTransporter();
+    
     if (transporter) {
       try {
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
+        console.log('📧 Attempting to send email notification...');
+        
+        const mailOptions = {
+          from: `"Portfolio Contact Form" <${process.env.EMAIL_USER}>`,
           to: process.env.EMAIL_USER,
           subject: `New Portfolio Contact from ${name}`,
           html: `
-            <h3>New Contact Form Submission</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message}</p>
-            <hr>
-            <p><strong>Reply to:</strong> ${email}</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #4F46E5;">New Contact Form Submission</h2>
+              <div style="background: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                <p><strong>Received:</strong> ${new Date().toLocaleString()}</p>
+              </div>
+              <div style="background: white; padding: 20px; border-left: 4px solid #4F46E5;">
+                <p><strong>Message:</strong></p>
+                <p style="white-space: pre-wrap;">${message}</p>
+              </div>
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #E5E7EB;">
+              <p style="color: #6B7280;">
+                <a href="mailto:${email}?subject=Re: Your message" 
+                   style="background: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                  Reply to ${name}
+                </a>
+              </p>
+            </div>
           `,
           replyTo: email,
-        });
+        };
+        
+        const info = await transporter.sendMail(mailOptions);
         emailSent = true;
-        console.log('✅ Email sent successfully');
+        console.log('✅ Email sent successfully!');
+        console.log('📨 Message ID:', info.messageId);
       } catch (emailError) {
-        console.error('⚠️  Email sending failed:', emailError.message);
+        console.error('❌ Email sending failed!');
+        console.error('Error details:', emailError.message);
+        console.error('Error code:', emailError.code);
         // Continue even if email fails
       }
+    } else {
+      console.log('⚠️  Email transporter not configured (EMAIL_USER or EMAIL_PASS missing)');
     }
 
     // Log the contact info to console as backup
