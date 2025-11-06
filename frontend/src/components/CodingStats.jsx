@@ -42,9 +42,9 @@ const CodingStats = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              CODING <span className="text-purple-600 dark:text-purple-400">ACTIVITY</span>
+              CODING <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">ACTIVITY</span>
             </h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 mx-auto rounded-full mb-4"></div>
+            <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
           </div>
 
           {loading ? (
@@ -251,12 +251,12 @@ const CodingStats = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-12 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-8 shadow-lg"
+              className="mt-12 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl p-8 shadow-lg"
             >
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Combined Achievement</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-purple-600 dark:text-purple-400">
+                  <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     {(stats.leetcode?.totalSolved || 0) + (stats.codechef?.problemsSolved || 0)}
                   </div>
                   <div className="text-sm text-gray-800 dark:text-gray-300 mt-2 font-semibold">Total Problems</div>
