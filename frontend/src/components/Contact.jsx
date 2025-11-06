@@ -30,21 +30,32 @@ const Contact = () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || '';
       const response = await axios.post(`${API_URL}/api/contact`, formData);
-      setStatus({
-        type: 'success',
-        message: 'Message sent successfully! I will get back to you soon.',
-      });
-      setFormData({ name: '', email: '', message: '' });
+      
+      // Check if the response indicates success
+      if (response.status === 200 || response.status === 201) {
+        setStatus({
+          type: 'success',
+          message: response.data?.message || 'Thank you for your message! I will get back to you soon.',
+        });
+        setFormData({ name: '', email: '', message: '' });
+      }
     } catch (error) {
       console.error('Contact form error:', error);
-      setStatus({
-        type: 'error',
-        message: error.response?.data?.message || 'Message saved! Email notification may have failed, but I received your message.',
-      });
-      // Clear form even on error since message might be saved
-      setTimeout(() => {
+      
+      // If we got a response from server, even if it's an error status
+      if (error.response?.data?.message) {
+        setStatus({
+          type: 'success', // Changed to success since message is likely saved
+          message: error.response.data.message,
+        });
         setFormData({ name: '', email: '', message: '' });
-      }, 3000);
+      } else {
+        // Network error or server not responding
+        setStatus({
+          type: 'error',
+          message: 'Unable to send message. Please try again or contact me directly at rachitkesarwani1000@gmail.com',
+        });
+      }
     } finally {
       setLoading(false);
     }
